@@ -1,23 +1,29 @@
-import logo from './logo.svg';
 import './App.css';
+import LoginForm from './pages/addUser/login';
+import Register from './pages/addUser/register';
+import NavBar from './components/navBar';
+import { BrowserRouter, Route, Switch, Redirect } from 'react-router-dom'; 
+import Home from './pages/home/home';
+import Movie from './pages/movie/movie';
+import { useState } from 'react';
 
 function App() {
+  const [search, setSearch] = useState({ query: '' });
+
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <BrowserRouter>
+        <NavBar search={search} setSearch={setSearch} />
+        <Switch>
+          <Route path='/' exact><Redirect to='/home' /></Route> 
+          <Route path='/home' exact>
+            <Home search={search} setSearch={setSearch} />
+          </Route>
+          <Route path='/movie/:id' component={Movie} exact />
+          <Route path='/signup' component={Register} exact />
+          <Route path='/login' component={LoginForm} exact />
+        </Switch>
+      </BrowserRouter>
     </div>
   );
 }
