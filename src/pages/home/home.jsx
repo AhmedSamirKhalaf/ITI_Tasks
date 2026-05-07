@@ -2,10 +2,13 @@ import { useEffect, useState } from "react";
 import Card from "../../components/card";
 import axios from "axios";
 import AcUnitIcon from '@mui/icons-material/AcUnit';
+import { useSelector } from "react-redux";
 
 function Home({ search, setSearch }) {
     const [list, setList] = useState([]);
     const [page, setPage] = useState({ currentPage: 1 });
+    const [itemsPerPage , setItemsPerPage] = useState(15);
+    
 
    
     useEffect(() => {
@@ -36,9 +39,14 @@ function Home({ search, setSearch }) {
         }
     };
 
+    const mytheme = useSelector((state)=>state.RthemeReducer.theme)
     return (
         <>
-            <div className="flex gap-9 flex-wrap justify-center mt-12">
+            <div className={`flex gap-9 flex-wrap justify-center 
+                pt-4
+                ${mytheme === 'light' ? 'text-black' : 'text-white'}
+                ${mytheme === 'light' ? 'bg-white' : 'bg-gray-800'}
+            `}>
                 <AcUnitIcon />
                 <h1 className="text-5xl font-semibold text-left">Movie's List</h1>
                 <AcUnitIcon />

@@ -60,8 +60,9 @@ function LoginForm(){
     
     return(
         <div className="flex items-center justify-center h-screen bg-base-100">
-            <fieldset className="fieldset ring-2 ring-gray-500/50 rounded-lg bg-base-200 border-base-300
-             rounded-box w-xl h-[50%] border p-4 ">
+            <fieldset className="fieldset  rounded-lg bg-base-200 border-base-300
+             rounded-box w-xl h-[50%] border p-4
+             transition duration-300 ease-in-out ring-2 ring-gray-200/20 hover:shadow-lg hover:ring-gray-700/50 ">
         <legend className="fieldset-legend text-2xl ml-4 font-bold bg-inherit">Hello There!</legend>
 
         <div className="flex flex-col my-0 mx-auto  gap-4 justify-normal w-[80%] items-start ">

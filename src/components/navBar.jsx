@@ -1,6 +1,10 @@
 import { useState, useRef, useEffect } from "react";
 import { Link } from "react-router-dom";
-
+import DarkModeIcon from '@mui/icons-material/DarkMode';
+import LightModeIcon from '@mui/icons-material/LightMode';
+import {useDispatch, useSelector} from 'react-redux';
+import { handleTheme } from "../Redux/Actions/ThemeAction";
+import FavoriteIcon from '@mui/icons-material/Favorite';
 function NavBar({
     search , setSearch
 }) {
@@ -22,18 +26,32 @@ function NavBar({
         });
     }
 
+    const myTheme = useSelector((state)=>state.RthemeReducer.theme);
+    const dispatch = useDispatch();
+
+
+    const changeMyTheme = (e) => {
+      dispatch(handleTheme(myTheme === 'light' ? 'dark' : 'light'));
+    }
+
+
   return (
-    <div className="navbar bg-base-100 shadow-sm border-b-2 border-gray-300 px-4 sticky top-0 z-50">
-      <div className="flex-1">
+    <div className={`navbar ${myTheme === 'light'? 'bg-base-100' : 'bg-gray-800'} 
+          ${myTheme === 'light' ? 'text-black' : 'text-white'}
+          shadow-sm border-b-2 border-gray-900 px-4 sticky top-0 z-50
+          mt-0
+          `}>
+      <div className="flex-1 ">
         <Link to="/home" className="font-semibold text-xl normal-case tracking-tight">
           Movie's Club
         </Link>
       </div>
-
+      
       <div className="flex-none flex items-center gap-2">
+      
         {/* Animated Search Container */}
         <div 
-          className={`flex items-center bg-gray-100 rounded-full transition-all duration-300 ease-in-out ${
+          className={`flex items-center ${myTheme === 'light' ? 'bg-gray-100' : 'bg-gray-900' }bg-gray-100 rounded-full transition-all duration-300 ease-in-out ${
             isSearchOpen ? "w-64 px-3 py-1 ring-2 ring-primary/50" : "w-10 h-10 justify-center"
           }`}
         >
@@ -58,15 +76,21 @@ function NavBar({
           )}
         </div>
 
+          <button className="btn hover:bg-slate-200 btn-circle" onClick={()=>changeMyTheme()}>
+            {myTheme === 'light' ? 
+            <DarkModeIcon className="hover:cursor-pointer"/> : 
+            <LightModeIcon className="hover:cursor-pointer" />
+            }
+            
+          </button>
+
         {/* Notifications Icon */}
-        <button className="btn btn-ghost btn-circle">
+        <Link to="/fav" className="btn btn-ghost btn-circle">
           <div className="indicator">
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
-            </svg>
+            <FavoriteIcon/>
             <span className="badge badge-xs badge-primary indicator-item"></span>
           </div>
-        </button>
+        </Link>
 
         {/* Menu Dropdown */}
         <div className="dropdown dropdown-end">
