@@ -26,9 +26,24 @@ function Card(props){
     <p className="text-lg truncate w-full font-bold text-center mb-2">
         {props.title}
     </p>
+        <div className='flex items-center justify-evenly '>
 
-    <p className="text-yellow-400 flex items-center justify-center"> <StarIcon />   {props.rating}  </p>
+        <p className="text-yellow-400 flex items-center justify-center"> <StarIcon />   {props.rating}  </p>
+        
+            <div 
+        onClick={handleFavoriteClick}
+        className="flex items-center justify-center mt-2"
+    >
+        {isFav 
+            ? <FavoriteIcon className="cursor-pointer text-red-500" />
+            : <FavoriteBorderIcon className="cursor-pointer hover:text-red-500" />
+        }
+    </div>
 
+        
+
+        </div>
+    
    <div>
     {/* Image — no click handler */}
     {props.image && (
@@ -40,15 +55,7 @@ function Card(props){
     )}
 
     {/* Favorite button — only the icon is clickable */}
-    <div 
-        onClick={handleFavoriteClick}
-        className="flex items-center justify-center mt-2"
-    >
-        {isFav 
-            ? <FavoriteIcon className="cursor-pointer text-red-500" />
-            : <FavoriteBorderIcon className="cursor-pointer hover:text-red-500" />
-        }
-    </div>
+    
 </div>
         <Link to={`/movie/${props.id}`} className="btn btn-outline hover:bg-slate-500 w-full mt-4">
             View Details

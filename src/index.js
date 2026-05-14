@@ -5,12 +5,15 @@ import App from './App';
 import reportWebVitals from './reportWebVitals';
 import { Provider } from 'react-redux';
 import myStore from './Redux/Store'
+import { LanguageProvider } from './context/languageContext';
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
+    <LanguageProvider>
     <Provider store={myStore}>
       <App />
     </Provider>
+    </LanguageProvider>
   </React.StrictMode>
 );
 
