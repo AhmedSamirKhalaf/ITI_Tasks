@@ -5,11 +5,33 @@ import LightModeIcon from '@mui/icons-material/LightMode';
 import {useDispatch, useSelector} from 'react-redux';
 import { handleTheme } from "../Redux/Actions/ThemeAction";
 import FavoriteIcon from '@mui/icons-material/Favorite';
+import { uselanguage } from "../context/languageContext";
+
 function NavBar({
     search , setSearch
 }) {
   const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const { language, setLanguage } = uselanguage();
   const inputRef = useRef(null);
+
+  const translations = {
+    en: {
+        logo: "Movie's Club",
+        search: "Search movies...",
+        home: "Home",
+        signIn: "Sign In",
+        signUp: "Sign Up"
+    },
+    ar: {
+        logo: "نادي الأفلام",
+        search: "ابحث عن أفلام...",
+        home: "الرئيسية",
+        signIn: "تسجيل الدخول",
+        signUp: "إنشاء حساب"
+    }
+  };
+
+  const t = translations[language] || translations.en;
 
  
   useEffect(() => {
@@ -39,10 +61,10 @@ function NavBar({
           ${myTheme === 'light' ? 'text-black' : 'text-white'}
           shadow-sm border-b-2 border-gray-900 px-4 sticky top-0 z-50
           mt-0
-          `}>
+          `} dir={language === 'ar' ? 'rtl' : 'ltr'}>
       <div className="flex-1 ">
         <Link to="/home" className="font-semibold text-xl normal-case tracking-tight">
-          Movie's Club
+          {t.logo}
         </Link>
       </div>
       
@@ -50,7 +72,7 @@ function NavBar({
       
         {/* Animated Search Container */}
         <div 
-          className={`flex items-center ${myTheme === 'light' ? 'bg-gray-100' : 'bg-gray-900' }bg-gray-100 rounded-full transition-all duration-300 ease-in-out ${
+          className={`flex items-center ${myTheme === 'light' ? 'bg-gray-100' : 'bg-gray-900' } rounded-full transition-all duration-300 ease-in-out ${
             isSearchOpen ? "w-64 px-3 py-1 ring-2 ring-primary/50" : "w-10 h-10 justify-center"
           }`}
         >
@@ -58,7 +80,7 @@ function NavBar({
             <input
               ref={inputRef}
               type="text"
-              placeholder="Search movies..."
+              placeholder={t.search}
               className="bg-transparent outline-none w-full text-sm"
               onBlur={() => setIsSearchOpen(false)}
               onChange={(e) => handleSearch(e)}
@@ -74,6 +96,15 @@ function NavBar({
             </button>
           )}
         </div>
+
+        <select 
+          className={`select select-sm select-ghost bg-transparent border-none focus:outline-none ${myTheme === 'light' ? 'text-black' : 'text-white'}`}
+          value={language}
+          onChange={(e) => setLanguage(e.target.value)}
+        >
+          <option value="en">English</option>
+          <option value="ar">Arabic</option>
+        </select>
 
           <button className="btn hover:bg-slate-200 btn-circle" onClick={()=>changeMyTheme()}>
             {myTheme === 'light' ? 
@@ -99,9 +130,9 @@ function NavBar({
             </svg>
           </div>
           <ul tabIndex={0} className={`menu menu-sm dropdown-content ${ myTheme==='light'?`bg-base-100` : `bg-base-800`} rounded-box z-[1] mt-3 w-52 p-2 shadow border border-gray-100`}>
-            <li><Link to="/home">Home</Link></li>
-            <li><Link to="/login">Sign In</Link></li>
-            <li><Link to="/signup">Sign Up</Link></li>
+            <li><Link to="/home">{t.home}</Link></li>
+            <li><Link to="/login">{t.signIn}</Link></li>
+            <li><Link to="/signup">{t.signUp}</Link></li>
           </ul>
         </div>
       </div>

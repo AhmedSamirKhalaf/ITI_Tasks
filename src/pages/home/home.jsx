@@ -1,33 +1,44 @@
 import { useEffect, useState } from "react";
 import Card from "../../components/card";
-import axios from "axios";
 import AcUnitIcon from '@mui/icons-material/AcUnit';
-import { useSelector } from "react-redux";
-
-const API_KEY = 'a7c71da888fc8a010a3a0a91aa1c8c4a';
-const searchURL = `https://api.themoviedb.org/3/search/movie`;
-const discoverURL = `https://api.themoviedb.org/3/discover/movie`;
+import { useDispatch, useSelector } from "react-redux";
+import { FetchMovies, MoviesSelector, MoviesStatus } from "./components/movieSlice";
+import { uselanguage } from "../../context/languageContext";
 
 function Home({ search }) {
-    const [list, setList] = useState([]);
     const [currentPage, setCurrentPage] = useState(1);
     const mytheme = useSelector((state) => state.RthemeReducer.theme);
+    const movies = useSelector((state) => state.RMoviesReducer.movies);
+    const status = useSelector((state) => state.RMoviesReducer.status);
+    const { language } = uselanguage();
+    const dispatch = useDispatch();
+
+    const translations = {
+        en: {
+            title: "Movie's List",
+            loading: "loading",
+            prev: "Prev",
+            next: "Next",
+            page: "Page"
+        },
+        ar: {
+            title: "قائمة الأفلام",
+            loading: "جاري التحميل",
+            prev: "السابق",
+            next: "التالي",
+            page: "صفحة"
+        }
+    };
+
+    const t = translations[language] || translations.en;
 
     useEffect(() => {
         setCurrentPage(1);
     }, [search.query]);
 
     useEffect(() => {
-        const params = search.query
-            ? { api_key: API_KEY, page: currentPage, query: search.query }
-            : { api_key: API_KEY, page: currentPage, certification_country: 'US', 'certification.lte': 'PG-13' };
-
-        axios.get(search.query ? searchURL : discoverURL, { params })
-            .then(res => setList(res.data.results))
-            .catch(err => console.log(err))
-            
-
-    }, [search.query, currentPage]);
+        dispatch(FetchMovies({ query: search.query, page: currentPage, language }));
+    }, [search.query, currentPage, language, dispatch]);
 
     
     const handlePagination = (e) => {
@@ -40,24 +51,27 @@ function Home({ search }) {
     return (
         <div className={`flex gap-9 flex-wrap justify-center pt-4
             ${mytheme === 'light' ? 'bg-white text-black' : 'bg-gray-800 text-white'}
-        `}>
+        `} dir={language === 'ar' ? 'rtl' : 'ltr'}>
             <AcUnitIcon />
-            <h1 className="text-5xl font-semibold">Movie's List</h1>
+            <h1 className="text-5xl font-semibold">{t.title}</h1>
             <AcUnitIcon />
             <hr className="w-full border-t border-black" />
 
-            {list.map(movie => (
-                        <Card
-                            key={movie.id}
-                            id={movie.id}
-                            title={movie.title}
-                            rating={movie.vote_average}
-                            overview={movie.overview}
-                            date={movie.release_date}
-                            image={`https://image.tmdb.org/t/p/w500${movie.poster_path}`}
-                        />
-                    ))
-            }
+            {status === 'pending' ? (
+                <h1 className="text-3xl font-bold w-full text-center">{t.loading}</h1>
+            ) : (
+                movies.map(movie => (
+                    <Card
+                        key={movie.id}
+                        id={movie.id}
+                        title={movie.title}
+                        rating={movie.vote_average}
+                        overview={movie.overview}
+                        date={movie.release_date}
+                        image={`https://image.tmdb.org/t/p/w500${movie.poster_path}`}
+                    />
+                ))
+            )}
 
             <hr className="w-full" />
             <div className="flex gap-3 pb-6">
@@ -66,15 +80,15 @@ function Home({ search }) {
                     name="decrease" 
                     onClick={handlePagination}
                     disabled={currentPage === 1}
-                >Prev</button>
+                >{t.prev}</button>
 
-                <span className="flex items-center px-4">Page {currentPage}</span>
+                <span className="flex items-center px-4">{t.page} {currentPage}</span>
 
                 <button 
                     className="btn bg-blue-600 p-5" 
                     name="increase" 
                     onClick={handlePagination}
-                >Next</button>
+                >{t.next}</button>
             </div>
         </div>
     );

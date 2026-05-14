@@ -1,7 +1,8 @@
-import {createStore } from 'redux';
-import {composeWithDevTools} from 'redux-devtools-extension';
+import { configureStore } from '@reduxjs/toolkit';
 import combineReducers from './Reducers/combineReducers';
 
-const myStore = createStore(combineReducers , composeWithDevTools());
+const myStore = configureStore({
+    reducer: combineReducers,
+});
 
 export default myStore;

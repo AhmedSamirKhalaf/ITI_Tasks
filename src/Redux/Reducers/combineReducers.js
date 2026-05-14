@@ -5,5 +5,5 @@ import MoviesReducer from '../../pages/home/components/movieSlice';
 export default combineReducers({
     RthemeReducer : themeReducer,
     RfavReducer : favReducer,
-    RMvoesReducer : MoviesReducer,
+    RMoviesReducer : MoviesReducer,
 });

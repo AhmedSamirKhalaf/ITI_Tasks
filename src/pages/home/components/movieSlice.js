@@ -1,8 +1,5 @@
 import { createSlice ,  createAsyncThunk} from "@reduxjs/toolkit";
 import axiosInstance from "./axiosInstance";
-import { uselanguage } from "../../../context/languageContext";
-import { useContext } from "react";
-
 
 const initialState = {
     movies : [],
@@ -10,32 +7,30 @@ const initialState = {
     error : null
 };
 
-const language = uselanguage
-
-
 // thunk
-const FetchMovies =  createAsyncThunk('movies/fetch', async () => {
-    const response = await axiosInstance('',{
-        params : {
-            
-        }
-    })
-    return response.data;
+export const FetchMovies = createAsyncThunk('movies/fetch', async ({ query, page, language }) => {
+    const endpoint = query ? '/search/movie' : '/discover/movie';
+    const params = query
+        ? { page, query, language }
+        : { page, language, certification_country: 'US', 'certification.lte': 'PG-13' };
+
+    const response = await axiosInstance.get(endpoint, { params });
+    return response.data.results;
 });
 
 const MoviesSlice = createSlice({
-    name : 'mvoies', 
+    name : 'movies', 
     initialState , 
     reducers : {
 
     },
     extraReducers(builder){
         builder
-        .addCase(FetchMovies.pending , (state , action) => {
+        .addCase(FetchMovies.pending , (state) => {
             state.status = 'pending';
         })
         .addCase(FetchMovies.fulfilled , (state , action) => {
-            state.movies.push(action.payload);
+            state.movies = action.payload;
             state.status = 'fulfilled';
         })
         .addCase(FetchMovies.rejected , (state , action) => {
@@ -46,12 +41,8 @@ const MoviesSlice = createSlice({
 })
 
 
-export const  MoviesSelector = (state) => state.movies.movies;
+export const MoviesSelector = (state) => state.movies.movies;
 export const MoviesStatus = (state) => state.movies.status;
 export const MoviesError = (state) => state.movies.error;
 
 export default MoviesSlice.reducer;
-
-
-
-
