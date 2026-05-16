@@ -7,7 +7,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { handleFav } from '../Redux/Actions/FavAction';
 function Card(props){
     React.useEffect(() => {
-        console.log("Card component rendered with props:", props.id);
+        console.log("Card component rendered with props:", props);
     }, []);
 
     const myfavs = useSelector((state)=> state.RfavReducer.fav); 

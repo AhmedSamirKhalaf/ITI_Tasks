@@ -1,11 +1,20 @@
-import { createSlice ,  createAsyncThunk} from "@reduxjs/toolkit";
+import { createSlice ,  createAsyncThunk, createSelector, createEntityAdapter} from "@reduxjs/toolkit";
 import axiosInstance from "./axiosInstance";
 
-const initialState = {
-    movies : [],
+
+
+// the createEntityAdapter normalize the data by converting the data comming from the api call from an array to an object which improves the lookup by id's 
+// and it gives u extra selectors in the extraReducers 
+const MoviesAdapter = createEntityAdapter();
+
+const initialState = MoviesAdapter.getInitialState({
     status : 'idle' , 
     error : null
-};
+});
+
+export const {selectAll: selectAllMovies ,selectById: selectByIdMovies} = MoviesAdapter.getSelectors(
+    state => state.RMoviesReducer
+);
 
 // thunk
 export const FetchMovies = createAsyncThunk('movies/fetch', async ({ query, page, language }) => {
@@ -30,7 +39,7 @@ const MoviesSlice = createSlice({
             state.status = 'pending';
         })
         .addCase(FetchMovies.fulfilled , (state , action) => {
-            state.movies = action.payload;
+            MoviesAdapter.setAll(state,action.payload);
             state.status = 'fulfilled';
         })
         .addCase(FetchMovies.rejected , (state , action) => {
@@ -41,8 +50,17 @@ const MoviesSlice = createSlice({
 })
 
 
-export const MoviesSelector = (state) => state.movies.movies;
-export const MoviesStatus = (state) => state.movies.status;
-export const MoviesError = (state) => state.movies.error;
+
+// createSelector improves performance by preventing the re-render every time the state changes only render when the data itself changes
+export const TopRatedMovies = createSelector(
+    selectAllMovies , 
+    (movies) => movies.filter(m => {
+        console.log(m)
+        return m.vote_average > 8
+    })
+);
+
+export const MoviesStatus = (state) => state.RMoviesReducer.status;
+export const MoviesError = (state) => state.RMoviesReducer.error;
 
 export default MoviesSlice.reducer;
